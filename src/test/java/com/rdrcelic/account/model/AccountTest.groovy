@@ -51,23 +51,16 @@ class AccountTest extends Specification {
     def "can take money on unblocked account "() {
         given:
             account.add(BigDecimal.TEN)
+        and:
             account.unblock()
+        and:
             BigDecimal saldo = account.getSaldo();
+        and:
             BigDecimal amount = BigDecimal.ONE.setScale(2)
         when:
             account.take(amount)
         then:
             assertThat(account.getSaldo().subtract(saldo).abs()).isEqualTo(amount)
-    }
-
-    def "if saldo is less or equal to 0 account turns to blocked"() {
-        given:
-            account.add(BigDecimal.ONE)
-            account.unblock()
-        when:
-            account.take(BigDecimal.TEN)
-        then:
-            assertThat(account.isAccountBlocked()).isTrue()
     }
 
     def "new account is blocked"() {

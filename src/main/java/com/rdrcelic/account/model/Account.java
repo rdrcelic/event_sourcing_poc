@@ -1,8 +1,22 @@
 package com.rdrcelic.account.model;
 
-import java.math.BigDecimal;
+import com.google.common.collect.ImmutableList;
+import io.vavr.API;
+import io.vavr.Predicates;
+import lombok.EqualsAndHashCode;
 
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+
+import static io.vavr.API.*;
+import static io.vavr.Predicates.*;
+import static io.vavr.collection.List.ofAll;
+
+@EqualsAndHashCode
 public class Account {
+
     /**
      * Number of decimals to retain. Also referred to as "scale".
      */
@@ -14,36 +28,79 @@ public class Account {
 
     private BigDecimal saldo = new BigDecimal("0");
     private AccountState state;
+    private String accountId;
 
-    void block() {
-        state = AccountState.BLOCKED;
+    private List<AccountEvent> newChanges = new ArrayList<>();
+
+    public Account(String accountNumber) {
+        this.state = AccountState.BLOCKED;
+        accountId = accountNumber;
     }
 
-    void unblock() throws IllegalStateException {
-        if (isSaldoBiggerThanZero() == false) {
-            throw new IllegalStateException();
+    public void block() {
+        // ACK
+        stateChanged(new AccountStateChangedEvent(AccountState.BLOCKED, Instant.now()));
+    }
+
+    public void unblock() throws IllegalStateException { // behaviour
+        if (isSaldoBiggerThanZero() == false) { // invariant
+            throw new IllegalStateException(); // NACK
         }
-        state = AccountState.UNBLOCKED;
+        // ACK
+        stateChanged(new AccountStateChangedEvent(AccountState.UNBLOCKED, Instant.now()));
     }
 
-    boolean isAccountBlocked() {
+    public boolean isAccountBlocked() {
         return state != AccountState.UNBLOCKED || !isSaldoBiggerThanZero();
     }
 
-    void take(BigDecimal amount) throws IllegalStateException {
-        if (isAccountBlocked()) {
-            throw new IllegalStateException();
+    public void take(BigDecimal amount) throws IllegalStateException { // behaviour
+        if (isAccountBlocked()) { // invariant
+            throw new IllegalStateException(); // NACK
         }
-
-        saldo = saldo.subtract(amount);
+        // ACK
+        amountSubstracted(new AmountSubstractedEvent(amount, Instant.now()));
     }
 
-    void add(BigDecimal amount) {
-        saldo = saldo.add(amount);
+    public void add(BigDecimal amount) {
+        // ACK
+        amountAdded(new AmountAddedEvent(amount, Instant.now()));
     }
 
-    BigDecimal getSaldo() {
+    public BigDecimal getSaldo() {
         return saldo.setScale(DECIMALS, ROUNDING_MODE);
+    }
+
+    public String getAccountId() {
+        return accountId;
+    }
+
+    public List<AccountEvent> getChanges() {
+        return ImmutableList.copyOf(newChanges);
+    }
+
+    public void flushChanges() {
+        newChanges.clear();
+    }
+
+    private Account amountAdded(AmountAddedEvent event) {
+        saldo = saldo.add(event.getAmount()); // change state
+        newChanges.add(event);
+
+        return this;
+    }
+    private Account amountSubstracted(AmountSubstractedEvent event) {
+        saldo = saldo.subtract(event.getAmount()); // change state
+        newChanges.add(event);
+
+        return this;
+    }
+
+    private Account stateChanged(AccountStateChangedEvent event) {
+        state = event.getState(); // change state
+        newChanges.add(event);
+
+        return this;
     }
 
     private boolean isSaldoBiggerThanZero() {
@@ -52,5 +109,18 @@ public class Account {
         }
 
         return false;
+    }
+
+    public static Account recreateFrom(String accountId, List<AccountEvent> accountEvents) {
+        return ofAll(accountEvents).foldLeft(new Account(accountId), Account::handleEvent);
+    }
+
+    private Account handleEvent(AccountEvent accountEvent) {
+        // use pattern matching
+        return API.Match(accountEvent).of(
+                Case($(Predicates.instanceOf(AccountStateChangedEvent.class)), this::stateChanged),
+                Case($(Predicates.instanceOf(AmountSubstractedEvent.class)), this::amountSubstracted),
+                Case($(Predicates.instanceOf(AmountAddedEvent.class)), this::amountAdded)
+        );
     }
 }
