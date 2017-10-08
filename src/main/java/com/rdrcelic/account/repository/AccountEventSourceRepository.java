@@ -5,6 +5,9 @@ import com.rdrcelic.account.model.AccountEvent;
 
 import java.util.List;
 
+/**
+ * This repository holds all events on account object from the beginning of time.
+ */
 public interface AccountEventSourceRepository {
 
     void save(Account account);
