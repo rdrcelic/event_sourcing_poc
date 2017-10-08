@@ -1,0 +1,3 @@
+[submodule "event-sourcing-poc-message-broker/kafka-kubernetes-submodule"]
+	path = event-sourcing-poc-message-broker/kafka-kubernetes-submodule
+	url = https://github.com/ramhiser/kafka-kubernetes.git
