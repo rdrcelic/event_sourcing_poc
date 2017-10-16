@@ -9,7 +9,7 @@
 	<packaging>jar</packaging>
 
 	<name>event-source-poc-account</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Sample event producer</description>
 
 	<parent>
 		<groupId>com.rdrcelic</groupId>
@@ -19,8 +19,13 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>com.rdrcelic</groupId>
+			<artifactId>event-source-poc-common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-stream-binder-kafka</artifactId>
+			<artifactId>spring-cloud-starter-stream-kafka</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

@@ -1,0 +1,7 @@
+spring:
+  cloud:
+    stream:
+      bindings:
+        account_channel:
+          destination: accountChange
+          contentType: application/json

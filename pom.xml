@@ -19,7 +19,8 @@
 	</parent>
 
 	<modules>
-		<module>account</module>
+        <module>common</module>
+        <module>account</module>
 	</modules>
 
 	<properties>

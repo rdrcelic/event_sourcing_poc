@@ -157,10 +157,12 @@ public class Account {
      */
     private Account handleEvent(AccountEvent accountEvent) {
         // use pattern matching
-        return API.Match(accountEvent).of(
+        Account recreatedAccount = API.Match(accountEvent).of(
                 Case($(Predicates.instanceOf(AccountStateChangedEvent.class)), this::stateChanged),
                 Case($(Predicates.instanceOf(AmountSubstractedEvent.class)), this::amountSubstracted),
                 Case($(Predicates.instanceOf(AmountAddedEvent.class)), this::amountAdded)
         );
+        recreatedAccount.flushChanges();
+        return recreatedAccount;
     }
 }
