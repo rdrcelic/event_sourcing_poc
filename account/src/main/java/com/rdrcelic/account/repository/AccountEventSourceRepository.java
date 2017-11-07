@@ -1,10 +1,8 @@
 package com.rdrcelic.account.repository;
 
 import com.rdrcelic.account.model.Account;
-import com.rdrcelic.account.model.AccountEvent;
 
 import java.time.Instant;
-import java.util.List;
 
 /**
  * This repository holds all events on account object from the beginning of time.

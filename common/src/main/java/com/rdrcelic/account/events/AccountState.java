@@ -1,4 +1,4 @@
-package com.rdrcelic.account.model;
+package com.rdrcelic.account.events;
 
 public enum AccountState {
     BLOCKED,

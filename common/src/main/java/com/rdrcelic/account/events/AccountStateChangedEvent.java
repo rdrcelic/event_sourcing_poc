@@ -1,13 +1,15 @@
-package com.rdrcelic.account.model;
+package com.rdrcelic.account.events;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 
 @Getter
+@NoArgsConstructor
 public class AccountStateChangedEvent implements AccountEvent {
-    private final AccountState state;
-    private final Instant when;
+    private AccountState state;
+    private Instant when;
 
     public AccountStateChangedEvent(AccountState state, Instant when) {
         this.state = state;

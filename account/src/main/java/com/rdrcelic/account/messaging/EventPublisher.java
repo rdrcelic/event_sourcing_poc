@@ -1,6 +1,6 @@
 package com.rdrcelic.account.messaging;
 
-import com.rdrcelic.account.model.AccountEvent;
+import com.rdrcelic.account.events.AccountEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.integration.annotation.Publisher;
 import org.springframework.stereotype.Component;

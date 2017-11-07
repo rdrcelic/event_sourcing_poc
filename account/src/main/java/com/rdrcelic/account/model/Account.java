@@ -1,6 +1,7 @@
 package com.rdrcelic.account.model;
 
 import com.google.common.collect.ImmutableList;
+import com.rdrcelic.account.events.*;
 import io.vavr.API;
 import io.vavr.Predicates;
 import lombok.EqualsAndHashCode;

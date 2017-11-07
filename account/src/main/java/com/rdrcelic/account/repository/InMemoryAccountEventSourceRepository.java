@@ -2,7 +2,7 @@ package com.rdrcelic.account.repository;
 
 import com.rdrcelic.account.messaging.EventPublisher;
 import com.rdrcelic.account.model.Account;
-import com.rdrcelic.account.model.AccountEvent;
+import com.rdrcelic.account.events.AccountEvent;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
